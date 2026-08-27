@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+ï»¿import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 export default function Signup() {
   const [form, setForm] = useState({ name: "", email: "", password: "", confirm: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const { signup } = useAuth();
   const navigate = useNavigate();
 
@@ -90,30 +93,50 @@ export default function Signup() {
 
           <div className="auth-field">
             <label className="auth-label" htmlFor="signup-password">Password</label>
-            <input
-              id="signup-password"
-              className="auth-input"
-              type="password"
-              name="password"
-              placeholder="Min. 6 characters"
-              autoComplete="new-password"
-              value={form.password}
-              onChange={handleChange}
-            />
+            <div className="auth-password-wrapper">
+              <input
+                id="signup-password"
+                className="auth-input"
+                type={showPassword ? "text" : "password"}
+                name="password"
+                placeholder="Min. 6 characters"
+                autoComplete="new-password"
+                value={form.password}
+                onChange={handleChange}
+              />
+              <button
+                type="button"
+                className="auth-password-toggle"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
 
           <div className="auth-field">
             <label className="auth-label" htmlFor="signup-confirm">Confirm Password</label>
-            <input
-              id="signup-confirm"
-              className="auth-input"
-              type="password"
-              name="confirm"
-              placeholder="••••••••"
-              autoComplete="new-password"
-              value={form.confirm}
-              onChange={handleChange}
-            />
+            <div className="auth-password-wrapper">
+              <input
+                id="signup-confirm"
+                className="auth-input"
+                type={showConfirm ? "text" : "password"}
+                name="confirm"
+                placeholder="........"
+                autoComplete="new-password"
+                value={form.confirm}
+                onChange={handleChange}
+              />
+              <button
+                type="button"
+                className="auth-password-toggle"
+                onClick={() => setShowConfirm(!showConfirm)}
+                aria-label={showConfirm ? "Hide password" : "Show password"}
+              >
+                {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
 
           <button

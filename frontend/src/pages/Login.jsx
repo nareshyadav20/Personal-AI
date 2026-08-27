@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+ï»¿import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -46,7 +48,7 @@ export default function Login() {
             </svg>
           </div>
           <h1 className="auth-title">Personal Assistant</h1>
-          <p className="auth-subtitle">Welcome back — sign in to continue</p>
+          <p className="auth-subtitle">Welcome back - sign in to continue</p>
         </div>
 
         <form className="auth-form" onSubmit={handleSubmit}>
@@ -68,16 +70,26 @@ export default function Login() {
 
           <div className="auth-field">
             <label className="auth-label" htmlFor="login-password">Password</label>
-            <input
-              id="login-password"
-              className="auth-input"
-              type="password"
-              name="password"
-              placeholder="••••••••"
-              autoComplete="current-password"
-              value={form.password}
-              onChange={handleChange}
-            />
+            <div className="auth-password-wrapper">
+              <input
+                id="login-password"
+                className="auth-input"
+                type={showPassword ? "text" : "password"}
+                name="password"
+                placeholder="........"
+                autoComplete="current-password"
+                value={form.password}
+                onChange={handleChange}
+              />
+              <button
+                type="button"
+                className="auth-password-toggle"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
 
           <button
@@ -91,7 +103,7 @@ export default function Login() {
         </form>
 
         <p className="auth-switch">
-          Don&apos;t have an account?{" "}
+          Don't have an account?{" "}
           <Link to="/signup" className="auth-link">Create one</Link>
         </p>
       </div>

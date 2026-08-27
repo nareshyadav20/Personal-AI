@@ -1390,3 +1390,29 @@ a {
   border-color: rgba(239,68,68,0.4);
   color: #f87171;
 }
+
+/* Auth Password Wrapper */
+.auth-password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.auth-password-wrapper .auth-input {
+  padding-right: 44px; /* Space for the eye icon */
+}
+.auth-password-toggle {
+  position: absolute;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+  padding: 4px;
+}
+.auth-password-toggle:hover {
+  color: var(--text-primary);
+}
