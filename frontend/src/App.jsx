@@ -1,26 +1,31 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
-import Home from './pages/Home';
-import Settings from './pages/Settings';
-import Sidebar from './components/Sidebar';
+import React, { useState } from "react";
+import { BrowserRouter as Router, Routes, Route, useNavigate, Navigate } from "react-router-dom";
+import Home from "./pages/Home";
+import Settings from "./pages/Settings";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import Sidebar from "./components/Sidebar";
+import ProtectedRoute from "./components/ProtectedRoute";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 
 function AppContent() {
   const [formData, setFormData] = useState({
-    platform: 'linkedin',
-    content_type: 'post',
-    tone: 'professional',
-    audience: 'general',
-    length: 'medium',
-    custom_prompt: '',
+    platform: "linkedin",
+    content_type: "post",
+    tone: "professional",
+    audience: "general",
+    length: "medium",
+    custom_prompt: "",
   });
 
   const [currentGeneration, setCurrentGeneration] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const handleSelectHistoryItem = (item) => {
     setCurrentGeneration(item);
-    navigate('/');
+    navigate("/");
   };
 
   const handleSelectTemplate = (template) => {
@@ -32,59 +37,72 @@ function AppContent() {
       audience: template.audience || prev.audience,
       custom_prompt: template.prompt_template || prev.custom_prompt,
     }));
-    navigate('/');
+    navigate("/");
   };
 
   const handleNewWorkspace = () => {
     setCurrentGeneration(null);
     setFormData({
-      platform: 'linkedin',
-      content_type: 'post',
-      tone: 'professional',
-      audience: 'general',
-      length: 'medium',
-      custom_prompt: '',
+      platform: "linkedin",
+      content_type: "post",
+      tone: "professional",
+      audience: "general",
+      length: "medium",
+      custom_prompt: "",
     });
-    navigate('/');
+    navigate("/");
   };
 
   return (
-    <div className="app-layout">
-      {/* Global Left Navigation Sidebar */}
-      <Sidebar
-        onSelectHistoryItem={handleSelectHistoryItem}
-        onSelectTemplate={handleSelectTemplate}
-        onNewWorkspace={handleNewWorkspace}
-        currentGenId={currentGeneration?.id}
-      />
+    <Routes>
+      {/* Public routes */}
+      <Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} />
+      <Route path="/signup" element={user ? <Navigate to="/" replace /> : <Signup />} />
 
-      {/* Main Content Area */}
-      <main className="main-content">
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <Home
-                formData={formData}
-                setFormData={setFormData}
-                currentGeneration={currentGeneration}
-                setCurrentGeneration={setCurrentGeneration}
-                isLoading={isLoading}
-                setIsLoading={setIsLoading}
+      {/* Protected routes */}
+      <Route
+        path="/*"
+        element={
+          <ProtectedRoute>
+            <div className="app-layout">
+              <Sidebar
+                onSelectHistoryItem={handleSelectHistoryItem}
+                onSelectTemplate={handleSelectTemplate}
+                onNewWorkspace={handleNewWorkspace}
+                currentGenId={currentGeneration?.id}
               />
-            }
-          />
-          <Route path="/settings" element={<Settings />} />
-        </Routes>
-      </main>
-    </div>
+              <main className="main-content">
+                <Routes>
+                  <Route
+                    path="/"
+                    element={
+                      <Home
+                        formData={formData}
+                        setFormData={setFormData}
+                        currentGeneration={currentGeneration}
+                        setCurrentGeneration={setCurrentGeneration}
+                        isLoading={isLoading}
+                        setIsLoading={setIsLoading}
+                      />
+                    }
+                  />
+                  <Route path="/settings" element={<Settings />} />
+                </Routes>
+              </main>
+            </div>
+          </ProtectedRoute>
+        }
+      />
+    </Routes>
   );
 }
 
 export default function App() {
   return (
     <Router>
-      <AppContent />
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
     </Router>
   );
 }

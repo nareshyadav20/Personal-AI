@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Home, Clock, Sparkles, Settings, Plus, X, Star, Trash2 } from 'lucide-react';
+import { Home, Clock, Sparkles, Settings, Plus, X, Star, Trash2, LogOut } from 'lucide-react';
 import { fetchHistory, fetchTemplates, toggleFavorite, deleteHistoryItem } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 export default function Sidebar({ onSelectHistoryItem, onSelectTemplate, onNewWorkspace, currentGenId }) {
+  const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -134,27 +136,38 @@ export default function Sidebar({ onSelectHistoryItem, onSelectTemplate, onNewWo
         {/* Footer profile status */}
         <div className="sidebar-footer">
           <div className="user-profile">
-            <div className="user-avatar">M</div>
+            <div className="user-avatar">{user ? user.name.charAt(0).toUpperCase() : 'U'}</div>
             <div className="user-info">
-              <span className="user-name">Musa</span>
+              <span className="user-name">{user ? user.name : 'User'}</span>
               <span className="user-status">
                 <span className="status-dot"></span>
                 <span>Active</span>
               </span>
             </div>
           </div>
-          <button
-            className="theme-toggle"
-            onClick={toggleTheme}
-            aria-label="Toggle theme"
-            title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-          >
-            <div className="theme-toggle-track">
-              <span className="theme-toggle-icon sun">☀️</span>
-              <span className="theme-toggle-icon moon">🌙</span>
-            </div>
-            <div className="theme-toggle-thumb" />
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <button
+              className="theme-toggle"
+              onClick={toggleTheme}
+              aria-label="Toggle theme"
+              title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            >
+              <div className="theme-toggle-track">
+                <span className="theme-toggle-icon sun">☀️</span>
+                <span className="theme-toggle-icon moon">🌙</span>
+              </div>
+              <div className="theme-toggle-thumb" />
+            </button>
+            <button
+              id="sidebar-logout"
+              className="sidebar-logout-btn"
+              onClick={logout}
+              title="Sign out"
+              aria-label="Sign out"
+            >
+              <LogOut size={15} />
+            </button>
+          </div>
         </div>
       </aside>
 
